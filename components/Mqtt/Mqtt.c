@@ -47,6 +47,9 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event)
 
     switch (event->event_id)
     {
+        case MQTT_EVENT_BEFORE_CONNECT:
+            break;
+            
         case MQTT_EVENT_CONNECTED:
             ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
 
