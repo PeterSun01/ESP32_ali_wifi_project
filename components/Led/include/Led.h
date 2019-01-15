@@ -1,31 +1,19 @@
-/*
-LED驱动程序
-创建日期：2018年10月29日
-作者：孙浩
-
-Led_Init(void);
-初始化LED，主要为GPIO初始化
-GPIO_LED_G=22
-
-Led_On(void);
-点亮LED
-
-Led_Off(void);
-熄灭LED
-
-*/
 #ifndef _LED_H_
 #define _LED_H_
 
 
 #include "freertos/FreeRTOS.h"
 
-
 extern void Led_Init(void);
-extern void Led_R_On(void);
-extern void Led_G_On(void);
-extern void Led_Y_On(void);
-extern void Led_Off(void);
+
+extern void Led_CTL_R_On(void);
+extern void Led_CTL_B_On(void);
+extern void Led_CTL_Off(void);
+
+extern void Led_STA_R_On(void);
+extern void Led_STA_G_On(void);
+extern void Led_STA_Y_On(void);
+
 
 uint8_t Led_Status;
 
@@ -35,6 +23,7 @@ uint8_t Led_Status;
 #define LED_STA_WIFIERR         0x03
 #define LED_STA_NOSER           0x04//无序列号
 #define LED_STA_SENDDATAOVER    0x05
+#define LED_STA_SENDDATAERR     0x06
 
 
 #endif

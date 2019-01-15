@@ -5,11 +5,12 @@
 #include "driver/uart.h"
 #include "driver/gpio.h"
 
+#include "Led.h"
 #include "PMS7003.h"
 
 
-#define UART1_TXD  (GPIO_NUM_33)
-#define UART1_RXD  (GPIO_NUM_14)
+#define UART1_TXD  (UART_PIN_NO_CHANGE)
+#define UART1_RXD  (GPIO_NUM_35)
 #define UART1_RTS  (UART_PIN_NO_CHANGE)
 #define UART1_CTS  (UART_PIN_NO_CHANGE)
 
@@ -26,7 +27,7 @@ void PMS7003_Init(void)
      //配置GPIO
     gpio_config_t io_conf;
     io_conf.intr_type = GPIO_INTR_DISABLE;
-    io_conf.pin_bit_mask = 1 << UART1_RXD;
+    io_conf.pin_bit_mask =  1ULL << UART1_RXD;
     io_conf.mode = GPIO_MODE_INPUT;
     io_conf.pull_down_en = 0;
     io_conf.pull_up_en = 0;
@@ -67,13 +68,19 @@ static uint8_t	Check_PMSensor_DataValid(uint8_t* PM_Sensor_RxBuffer)
 		{
 			Cal_CheckSum += PM_Sensor_RxBuffer[i];
 		}
-
 		if(Cal_CheckSum == Buffer_CheckSum)
 			Result = 1;
 	}
 	return Result;
 }
 
+
+/*
+PM2.5浓度与LED指示
+优：0~100    			绿色
+轻度污染：101~300 	     黄色	   
+重度污染：301及以上       红色  
+*/
 
 
 void PMS7003_Read_Task(void* arg)
@@ -92,6 +99,18 @@ void PMS7003_Read_Task(void* arg)
                 PM2_5  = (uint16_t)((data_u1[12]<<8) | data_u1[13]);
                 PM10   = (uint16_t)((data_u1[14]<<8) | data_u1[15]);
                 //ESP_LOGI(TAG, "PM2_5=%d,PM10=%d", PM2_5,PM10);
+                if(PM2_5<=100)//优：0~100绿色
+                {
+                    Led_STA_G_On();
+                }
+                else if((PM2_5>100)&&(PM2_5<=300))//轻度污染：101~300 黄色	   
+                {
+                    Led_STA_Y_On();
+                }
+                else if(PM2_5>300)//重度污染：301及以上 红色  
+                {
+                    Led_STA_R_On();
+                }
             }
             bzero(data_u1,sizeof(data_u1));                 
         }  

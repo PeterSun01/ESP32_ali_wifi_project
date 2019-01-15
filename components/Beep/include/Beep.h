@@ -8,7 +8,7 @@ extern void Beep_Init(void);
 extern void Beep_On(void);
 extern void Beep_Off(void);
 
-#define GPIO_BEEP    5
+#define GPIO_BEEP    19
 
 uint8_t Beep_status;
 #define BEEP_ON     0X01

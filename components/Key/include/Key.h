@@ -4,7 +4,7 @@
 
 extern void key_Init(void);
 
-#define GPIO_KEY    27
+#define GPIO_KEY    4
 
 
 #endif

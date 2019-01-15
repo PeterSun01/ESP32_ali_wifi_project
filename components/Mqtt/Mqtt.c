@@ -35,6 +35,9 @@ esp_mqtt_client_handle_t client;
 EventGroupHandle_t mqtt_event_group;
 static const int MQTT_CONNECTED_BIT = BIT0;
 
+char Topic_Set[256];
+char Topic_Post[256];
+
 
 static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event)
 {
@@ -48,14 +51,15 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event)
             ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
 
             xEventGroupSetBits(mqtt_event_group, MQTT_CONNECTED_BIT);
-
-            msg_id = esp_mqtt_client_subscribe(client, TOPIC_SET, 0);
+           
+            msg_id = esp_mqtt_client_subscribe(client, Topic_Set, 0);//订阅
             ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
             
             break;
 
         case MQTT_EVENT_DISCONNECTED:
             ESP_LOGI(TAG, "MQTT_EVENT_DISCONNECTED");
+            //Led_Status=LED_STA_SENDDATAERR;
             xEventGroupClearBits(mqtt_event_group, MQTT_CONNECTED_BIT);
             break;
 
@@ -78,7 +82,7 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event)
 
             parse_objects_mqtt(event->data);//收到平台MQTT数据并解析
             bzero(event->data,strlen(event->data));
-            Mqtt_Send_Msg(TOPIC_POST);
+            Mqtt_Send_Msg(Topic_Post);
             
             break;
 
@@ -111,7 +115,7 @@ static void MqttSend_Task(void* arg)
     {
         xEventGroupWaitBits(s_wifi_event_group, CONNECTED_BIT , false, true, portMAX_DELAY); 
         xEventGroupWaitBits(mqtt_event_group, MQTT_CONNECTED_BIT , false, true, portMAX_DELAY); 
-        Mqtt_Send_Msg(TOPIC_POST);
+        Mqtt_Send_Msg(Topic_Post);
         vTaskDelay(10000 / portTICK_RATE_MS);
     }   
 }
@@ -140,6 +144,13 @@ void initialise_mqtt(void)
     printf("DeviceSecret=%s\n",DeviceSecret);
     aliyun_iot_common_hmac_sha1(mqtt_content, strlen(mqtt_content), mqtt_passwd, DeviceSecret, strlen(DeviceSecret));
     printf("mqtt_passwd=%s\n",mqtt_passwd);
+
+    //Topic_Set = "/sys/ProductKey/DeviceName/thing/service/property/set"           
+    sprintf(Topic_Set,"/sys/%s/%s/thing/service/property/set",ProductKey,DeviceName);
+    printf("Topic_Set=%s\n",Topic_Set);
+    //Topic_Post=/sys/ProductKey/DeviceName/thing/event/property/post
+    sprintf(Topic_Post,"/sys/%s/%s/thing/event/property/post",ProductKey,DeviceName);
+    printf("Topic_Post=%s\n",Topic_Post);
 
     const esp_mqtt_client_config_t mqtt_cfg = {
 
