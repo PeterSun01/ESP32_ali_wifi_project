@@ -14,6 +14,7 @@
 #include "Beep.h"
 #include "sht31.h"
 #include "PMS7003.h"
+#include "Human.h"
 
 int beep=0;
 
@@ -193,7 +194,7 @@ void create_mqtt_json(creat_json *pCreat_json)
     cJSON_AddItemToObject(next, "PM25", cJSON_CreateNumber(PM2_5));
     cJSON_AddItemToObject(next, "PM10", cJSON_CreateNumber(PM10));
     ESP_LOGI("PMS7003", "PM2_5=%d,PM10=%d", PM2_5,PM10);
-    cJSON_AddItemToObject(next, "HumanDetectionSwitch", cJSON_CreateNumber(1));
+    cJSON_AddItemToObject(next, "HumanDetectionSwitch", cJSON_CreateNumber(Human_status));
     cJSON_AddItemToObject(next, "Switch_JDQ", cJSON_CreateNumber(beep));
     wifi_ap_record_t wifidata;
     if (esp_wifi_sta_get_ap_info(&wifidata) == 0)

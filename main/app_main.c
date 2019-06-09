@@ -21,6 +21,7 @@
 #include "Beep.h"
 #include "sht31.h"
 #include "PMS7003.h"
+#include "Human.h"
 
 
 extern const int CONNECTED_BIT;
@@ -126,6 +127,7 @@ void app_main(void)
   key_Init();
   Beep_Init();
   PMS7003_Init();
+  Human_Init();
 
   xTaskCreate(Uart0_Task, "Uart0_Task", 4096, NULL, 10, NULL);
 
