@@ -18,7 +18,7 @@ static void Human_Task(void* arg)
     while(1)
     {
         Human_status=gpio_get_level(GPIO_HUMAN);
-        printf("human =%d\n",Human_status);
+        //printf("human =%d\n",Human_status);
         vTaskDelay(100 / portTICK_RATE_MS);
     }
 }
