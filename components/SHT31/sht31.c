@@ -128,7 +128,7 @@ bool sht31_readTempHum()
 	stemp *= 175;
 	stemp /= 0xffff;
 	stemp = -45 + stemp;
-	int temp_int=stemp*10;
+	int temp_int=stemp*10*0.9;
 	temp = (double)temp_int/10;	
 	//ESP_LOGW("SHT30", "stemp=%f", stemp);
 	//ESP_LOGE("SHT30", "temp=%f", temp);
